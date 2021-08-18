@@ -11,7 +11,7 @@ import { InvalidationLevel } from '../model/invalidate-mask';
 import { IPriceDataSource } from '../model/iprice-data-source';
 import { LayoutOptions } from '../model/layout-options';
 import { PriceScalePosition } from '../model/pane';
-import { PriceScale } from '../model/price-scale';
+import { PriceMark, PriceScale } from '../model/price-scale';
 import { TextWidthCache } from '../model/text-width-cache';
 import { PriceAxisViewRendererOptions } from '../renderers/iprice-axis-view-renderer';
 import { PriceAxisRendererOptionsProvider } from '../renderers/price-axis-renderer-options-provider';
@@ -186,8 +186,7 @@ export class PriceAxisWidget implements IDestroyable {
 
 		if (tickMarks.length > 0) {
 			tickMarkMaxWidth = Math.max(
-				this._widthCache.measureText(ctx, tickMarks[0].label),
-				this._widthCache.measureText(ctx, tickMarks[tickMarks.length - 1].label)
+				...tickMarks.map((tickMark: PriceMark) => this._widthCache.measureText(ctx, tickMark.label))
 			);
 		}
 
