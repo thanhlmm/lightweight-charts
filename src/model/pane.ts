@@ -259,10 +259,10 @@ export class Pane implements IDestroyable {
 	public defaultPriceScale(): PriceScale {
 		let priceScale: PriceScale | null = null;
 
-		if (this._model.options().rightPriceScale.visible && this._rightPriceScale.dataSources().length !== 0) {
-			priceScale = this._rightPriceScale;
-		} else if (this._model.options().leftPriceScale.visible && this._leftPriceScale.dataSources().length !== 0) {
+		if (this._model.options().leftPriceScale.visible && this._leftPriceScale.dataSources().length !== 0) {
 			priceScale = this._leftPriceScale;
+		} else if (this._model.options().rightPriceScale.visible && this._rightPriceScale.dataSources().length !== 0) {
+			priceScale = this._rightPriceScale;
 		} else if (this._dataSources.length !== 0) {
 			priceScale = this._dataSources[0].priceScale();
 		}
