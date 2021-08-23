@@ -190,6 +190,16 @@ export class PriceAxisWidget implements IDestroyable {
 			);
 		}
 
+		// make sure we display enough space on hover event
+		const priceScale = this.priceScale();
+		if (priceScale) {
+			const priceRange = priceScale.priceRange();
+			tickMarkMaxWidth = Math.max(
+				tickMarkMaxWidth,
+				this._widthCache.measureText(ctx, (priceRange ? priceScale.formatPriceAbsolute(priceRange.length() / 2) : ''))
+			);
+		}
+
 		const views = this._backLabels();
 		for (let j = views.length; j--;) {
 			const width = this._widthCache.measureText(ctx, views[j].text());
