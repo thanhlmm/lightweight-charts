@@ -53,6 +53,7 @@ export class PriceTickMarkBuilder {
 		return min(spans);
 	}
 
+	// eslint-disable-next-line complexity
 	public rebuildTickMarks(): void {
 		const priceScale = this._priceScale;
 
@@ -85,6 +86,24 @@ export class PriceTickMarkBuilder {
 
 		const sign = (high >= low) ? 1 : -1;
 		let prevCoord: number | null = null;
+
+		if ((high - mod) === 0) {
+			// In case there is no tick mark
+			const offset = this._priceScale.options().entireTextOnly ? 5 : 0;
+			this._marks = [
+				{
+					coord: this._logicalToCoordinateFunc(low, firstValue, true) - offset as Coordinate,
+					label: priceScale.formatLogical(low),
+				},
+				{
+					coord: this._logicalToCoordinateFunc(high, firstValue, true) + offset as Coordinate,
+					label: priceScale.formatLogical(high),
+				},
+			];
+
+			this._marks.length = 2;
+			return;
+		}
 
 		let targetIndex = 0;
 
