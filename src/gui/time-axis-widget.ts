@@ -319,34 +319,49 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 		const tickWidth = Math.max(1, Math.floor(pixelRatio));
 		const tickOffset = Math.floor(pixelRatio * 0.5);
 
+		ctx.fillStyle = this._textColor();
+
+		const tickMarkVisible: TimeMark[] = [];
+
+		// eslint-disable-next-line complexity
+		drawScaled(ctx, pixelRatio, () => {
+			// draw base marks
+			ctx.font = this._baseFont();
+			const timeScaleOption = this._chart.options().timeScale;
+			const axisSize = this.getSize();
+			for (const tickMark of tickMarks) {
+				const labelWidth = rendererOptions.widthCache.measureText(ctx, tickMark.label);
+				const labelVisibleLeft = timeScaleOption.entireTextOnLocked && timeScaleOption.fixLeftEdge ? (tickMark.coord - labelWidth / 2) > 0 : true;
+				const labelVisibleRight = timeScaleOption.entireTextOnLocked && timeScaleOption.fixRightEdge ? (tickMark.coord + labelWidth) < axisSize.w : true;
+				const labelVisible = labelVisibleLeft && labelVisibleRight;
+				if (tickMark.weight < maxWeight && labelVisible) {
+					ctx.fillText(tickMark.label, tickMark.coord, yText);
+					tickMarkVisible.push(tickMark);
+				}
+			}
+			ctx.font = this._baseBoldFont();
+			for (const tickMark of tickMarks) {
+				const labelWidth = rendererOptions.widthCache.measureText(ctx, tickMark.label);
+				const labelVisibleLeft = timeScaleOption.entireTextOnLocked && timeScaleOption.fixLeftEdge ? (tickMark.coord - labelWidth / 2) > 0 : true;
+				const labelVisibleRight = timeScaleOption.entireTextOnLocked && timeScaleOption.fixRightEdge ? (tickMark.coord + labelWidth) < axisSize.w : true;
+				const labelVisible = labelVisibleLeft && labelVisibleRight;
+				if (tickMark.weight >= maxWeight && labelVisible) {
+					ctx.fillText(tickMark.label, tickMark.coord, yText);
+					tickMarkVisible.push(tickMark);
+				}
+			}
+		});
+
 		if (this._chart.model().timeScale().options().borderVisible) {
 			ctx.beginPath();
 			const tickLen = Math.round(rendererOptions.tickLength * pixelRatio);
-			for (let index = tickMarks.length; index--;) {
-				const x = Math.round(tickMarks[index].coord * pixelRatio);
+			for (let index = tickMarkVisible.length; index--;) {
+				const x = Math.round(tickMarkVisible[index].coord * pixelRatio);
 				ctx.rect(x - tickOffset, borderSize, tickWidth, tickLen);
 			}
 
 			ctx.fill();
 		}
-
-		ctx.fillStyle = this._textColor();
-
-		drawScaled(ctx, pixelRatio, () => {
-			// draw base marks
-			ctx.font = this._baseFont();
-			for (const tickMark of tickMarks) {
-				if (tickMark.weight < maxWeight) {
-					ctx.fillText(tickMark.label, tickMark.coord, yText);
-				}
-			}
-			ctx.font = this._baseBoldFont();
-			for (const tickMark of tickMarks) {
-				if (tickMark.weight >= maxWeight) {
-					ctx.fillText(tickMark.label, tickMark.coord, yText);
-				}
-			}
-		});
 	}
 
 	private _drawLabels(sources: readonly IDataSource[], ctx: CanvasRenderingContext2D, pixelRatio: number): void {

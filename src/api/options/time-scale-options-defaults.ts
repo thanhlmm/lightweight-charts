@@ -6,6 +6,7 @@ export const timeScaleOptionsDefaults: TimeScaleOptions = {
 	minBarSpacing: 0.5,
 	fixLeftEdge: false,
 	fixRightEdge: false,
+	entireTextOnLocked: false,
 	lockVisibleTimeRangeOnResize: false,
 	rightBarStaysOnScroll: false,
 	borderVisible: true,

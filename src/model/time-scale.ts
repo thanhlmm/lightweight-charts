@@ -70,6 +70,7 @@ export interface TimeScaleOptions {
 	minBarSpacing: number;
 	fixLeftEdge: boolean;
 	fixRightEdge: boolean;
+	entireTextOnLocked: boolean;
 	lockVisibleTimeRangeOnResize: boolean;
 	rightBarStaysOnScroll: boolean;
 	borderVisible: boolean;
